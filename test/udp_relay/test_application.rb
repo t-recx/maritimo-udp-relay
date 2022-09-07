@@ -19,6 +19,7 @@ describe Application do
   let(:listen_port) { 3500 }
   let(:destination_address) { "test.org" }
   let(:destination_port) { 3212 }
+  let(:source_id) { nil }
 
   subject { Application.new udp_socket_factory, kernel }
 
@@ -43,21 +44,34 @@ describe Application do
     end
 
     describe "when socket returns values" do
-      let(:udp_data_received) { [["ONE\nTWO\n", [nil, nil, nil, "230.49.12.3"]], ["A\nB\n", [nil, nil, nil, "174.2.44.1"]]] }
+      let(:udp_data_received) { [["\\x:2093,s:ORIGINSOURCE,c:2039*00\\ONE\n\\x:999*00\\TWO\n", [nil, nil, nil, "230.49.12.3"]], ["A\n\\s:ORIGINSOURCE*00\\B\n", [nil, nil, nil, "174.2.44.1"]]] }
 
       it "should be received and published with the source's ip address" do
         exercise_run
 
         _(@udp_socket.sent).must_equal [
-          {message: "[230.49.12.3]ONE\n[230.49.12.3]TWO", flags: 0, address: destination_address, port: destination_port},
-          {message: "[174.2.44.1]A\n[174.2.44.1]B", flags: 0, address: destination_address, port: destination_port}
+          {message: "[230.49.12.3]\\x:2093,s:ORIGINSOURCE,c:2039*00\\ONE\n[230.49.12.3]\\x:999*00\\TWO\n", flags: 0, address: destination_address, port: destination_port},
+          {message: "[174.2.44.1]A\n[174.2.44.1]\\s:ORIGINSOURCE*00\\B\n", flags: 0, address: destination_address, port: destination_port}
         ]
+      end
+
+      describe "and when source_id is set" do
+        let(:source_id) { "SOURCE" }
+
+        it "should include source parameter" do
+          exercise_run
+
+          _(@udp_socket.sent).must_equal [
+            {message: "[230.49.12.3]\\x:2093,s:SOURCE,c:2039*00\\ONE\n[230.49.12.3]\\s:SOURCE,x:999*00\\TWO\n", flags: 0, address: destination_address, port: destination_port},
+            {message: "[174.2.44.1]\\s:SOURCE*00\\A\n[174.2.44.1]\\s:SOURCE*00\\B\n", flags: 0, address: destination_address, port: destination_port}
+          ]
+        end
       end
     end
   end
 
   def exercise_run
-    subject.run listen_port, destination_address, destination_port
+    subject.run listen_port, destination_address, destination_port, source_id
   end
 end
 
