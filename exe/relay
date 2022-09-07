@@ -6,10 +6,12 @@ require "udp_relay"
 env_var_listen_port = "RELAY_LISTEN_PORT"
 env_var_destination_address = "RELAY_DESTINATION_ADDRESS"
 env_var_destination_port = "RELAY_DESTINATION_PORT"
+env_var_source_id = "RELAY_SOURCE_ID"
 
 listen_port = ENV[env_var_listen_port]
 destination_address = ENV[env_var_destination_address]
 destination_port = ENV[env_var_destination_port]
+source_id = ENV[env_var_source_id]
 
 unless listen_port
   warn "No listen port configured. Set #{env_var_listen_port} environment variable"
@@ -29,4 +31,4 @@ unless destination_port
   return
 end
 
-UdpRelay.application.run listen_port, destination_address, destination_port
+UdpRelay.application.run listen_port, destination_address, destination_port, source_id
