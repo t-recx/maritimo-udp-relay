@@ -11,12 +11,13 @@ This application receives data via-UDP annotates each message with the sender's 
 
 Configuration is done via environment variables.
 
-| Name                      | Description          |
-| ------------------------- | -------------------- |
-| RELAY_LISTEN_PORT         | Listening port       |
-| RELAY_DESTINATION_ADDRESS | Destination address  |
-| RELAY_DESTINATION_PORT    | Destination port     |
-| RELAY_SOURCE_ID           | Source ID (optional) |
+| Name                      | Description                         |
+| ------------------------- | ----------------------------------- |
+| RELAY_LISTEN_PORT         | Listening port                      |
+| RELAY_DESTINATION_ADDRESS | Destination address                 |
+| RELAY_DESTINATION_PORT    | Destination port                    |
+| RELAY_SOURCE_ID           | Source ID (optional)                |
+| RELAY_CONNECTION_TYPE     | Listening connection type (TCP/UDP) |
 
 ## Running
 

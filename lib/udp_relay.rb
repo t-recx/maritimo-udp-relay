@@ -3,6 +3,7 @@
 require_relative "udp_relay/version"
 require_relative "udp_relay/application"
 require_relative "udp_relay/application_tcp"
+require_relative "udp_relay/message_creator"
 
 module UdpRelay
   class Error < StandardError; end
